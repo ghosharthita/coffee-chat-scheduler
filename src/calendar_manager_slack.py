@@ -2,6 +2,7 @@ import os
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from google.oauth2.credentials import Credentials
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from datetime import datetime, timedelta
 
@@ -12,8 +13,9 @@ app = App(token=os.environ["SLACK_BOT_TOKEN"])
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 def get_calendar_service(user_id):
-    # This function should retrieve the user's Google credentials
-    # You'll need to implement OAuth2 flow to get these credentials
+    # Load credentials from the environment variable
+    creds = service_account.Credentials.from_service_account_file(
+        f'token_{user_id}.json', SCOPES)
     creds = Credentials.from_authorized_user_file(f'token_{user_id}.json', SCOPES)
     return build('calendar', 'v3', credentials=creds)
 
